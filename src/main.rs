@@ -1,15 +1,11 @@
-use lazy_static::lazy_static;
-use prettytable::Table;
-use regex::Regex;
 use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::process;
 use std::vec::Vec;
 
-lazy_static! {
-    static ref RE: Regex = Regex::new(r"(-?\d+\.\d+)").unwrap();
-}
+use prettytable::Table;
+use regex::Regex;
 
 fn main() -> Result<(), std::io::Error> {
     if env::args().len() != 2 {
@@ -21,10 +17,12 @@ fn main() -> Result<(), std::io::Error> {
     let mut buf = String::new();
     file.read_to_string(&mut buf)?;
 
+    let re = Regex::new(r"(-?\d+\.\d+)").unwrap();
+
     let rows: Vec<Vec<f32>> = buf
         .lines()
         .map(|line| {
-            RE.find_iter(line)
+            re.find_iter(line)
                 .map(|col| col.as_str().parse::<f32>().unwrap())
                 .collect::<Vec<f32>>()
         })
